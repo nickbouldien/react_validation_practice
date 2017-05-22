@@ -21,8 +21,12 @@ class RegistrationStore extends EventEmitter{
     return this.errors
   }
 
-  addError(){
-    // copy here
+//   addError(){
+//     // copy here
+//   }
+  
+  addError(fieldName, message){
+   this.errors[fieldName] = message
   }
 
   validate(){
