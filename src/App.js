@@ -2,42 +2,54 @@ import React, { Component } from 'react';
 import Header from './components/Header'
 import FormInput from './components/FormInput';
 import registrationStore from './store/RegistrationStore';
-import {formInputChange} from './actions/Actions'
+//import {formInputChange} from './actions/Actions'
 
 class App extends Component {
   constructor(props){
     super(props)
     this.state={
-      registration:registrationStore.getFields()
-
+      registration:registrationStore.getFields(),
+      errors: {}
     }
   }
-
 
   handleChange(event){
     const target = event.target
     // debugger;
     const registration = this.state.registration
-    formInputChange(target.name, target.value)
-    // registration[target.name] = target.value
-    // this.setState({
-    //   registration: registration
-    
+//    formInputChange(target.name, target.value) // took out???
+    registration[target.name] = target.value
+    this.setState({
+      registration: registration
+    })
   }
 
+  validate(){
+    registrationStore.validate()
+    this.setState({errors: registrationStore.getErrors()})
+  }
+
+// uncoment this.validate below
   handleSubmit(event){
     event.preventDefault()
+    this.validate()
     console.log(this.state.registration)
+      //this.validate()
   }
+
+  isValid(){
+    return Object.keys(this.state.errors).length === 0
+  }
+
   componentWIllMount(){
     registrationStore.on('change', this.handleUpdate.bind(this))
   }
 
   handleUpdate(){
     this.setState({
-      registration: registrationStore.getFields()
+      registration: registrationStore.getFields(),
+      errors: {}
     })
-
   }
 
   render() {
@@ -49,15 +61,24 @@ class App extends Component {
             <div className='col-xs-6 col-xs-offset-3'>
               <div className='panel panel-default'>
                 <div className='panel-body'>
+
+                  {!this.isValid() &&
+                    <div className='aler alert-dange'>
+                      verify all fields filled in correctly
+                    </div>
+                  }
+
                   <h3>Registration</h3>
                   <form onSubmit={this.handleSubmit.bind(this)}>
                     <div className='row'>
 
                       <div className='col-xs-12'>
-                          <FormInput name="firstName"
+                          <FormInput
+                            name="firstName"
                             label="First Name"
-                            field={this.state.registration.firstName}
+                            value={this.state.registration.firstName}
                             onChange={this.handleChange.bind(this)}
+                            errors={this.state.errors.firstName}
                           />
                       </div>
                     </div>
@@ -68,8 +89,9 @@ class App extends Component {
                           <FormInput
                             name="lastName"
                             label="Last Name"
-                            field={this.state.registration.lastName}
+                            value={this.state.registration.lastName}
                             onChange={this.handleChange.bind(this)}
+                            errors={this.state.errors.lastName}
                           />
                       </div>
                     </div>
@@ -80,8 +102,9 @@ class App extends Component {
                           <FormInput
                             name="email"
                             label="Email"
-                            field={this.state.registration.email}
+                            value={this.state.registration.email}
                             onChange={this.handleChange.bind(this)}
+                            errors={this.state.errors.email}
                           />
                       </div>
                     </div>
@@ -91,8 +114,10 @@ class App extends Component {
                         <FormInput
                           name="password"
                           label="Password"
-                          field={this.state.registration.password}
+                          type="password"
+                          value={this.state.registration.password}
                           onChange={this.handleChange.bind(this)}
+                          errors={this.state.errors.password}
                         />
 
                       </div>
