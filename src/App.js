@@ -1,31 +1,43 @@
 import React, { Component } from 'react';
 import Header from './components/Header'
+import FormInput from './components/FormInput';
+import registrationStore from './store/RegistrationStore';
+import {formInputChange} from './actions/Actions'
 
 class App extends Component {
   constructor(props){
     super(props)
     this.state={
-      registration: {
-        firstName:'',
-        lastName:'',
-        email:'',
-        password:''
-      }
+      registration:registrationStore.getFields()
+
     }
   }
 
+
   handleChange(event){
     const target = event.target
+    // debugger;
     const registration = this.state.registration
-    registration[target.name] = target.value
-    this.setState({
-      registration: registration
-    })
+    formInputChange(target.name, target.value)
+    // registration[target.name] = target.value
+    // this.setState({
+    //   registration: registration
+    
   }
 
   handleSubmit(event){
     event.preventDefault()
     console.log(this.state.registration)
+  }
+  componentWIllMount(){
+    registrationStore.on('change', this.handleUpdate.bind(this))
+  }
+
+  handleUpdate(){
+    this.setState({
+      registration: registrationStore.getFields()
+    })
+
   }
 
   render() {
@@ -40,79 +52,49 @@ class App extends Component {
                   <h3>Registration</h3>
                   <form onSubmit={this.handleSubmit.bind(this)}>
                     <div className='row'>
+
                       <div className='col-xs-12'>
-                        <div className='form-group'> 
-                          <label 
-                            htmlFor='firstName'
-                            className='control-label'
-                          >
-                            First Name
-                          </label>
-                          <input
-                            name='firstName'
-                            value={this.state.registration.firstName}
+                          <FormInput name="firstName"
+                            label="First Name"
+                            field={this.state.registration.firstName}
                             onChange={this.handleChange.bind(this)}
-                            className='form-control'
                           />
-                        </div>
                       </div>
                     </div>
 
                     <div className='row'>
                       <div className='col-xs-12'>
-                        <div className='form-group'>
-                          <label 
-                            htmlFor='lastName'
-                            className='control-label'
-                          >
-                            Last Name
-                          </label>
-                          <input
-                            name='lastName'
-                            value={this.state.registration.lastName}
+
+                          <FormInput
+                            name="lastName"
+                            label="Last Name"
+                            field={this.state.registration.lastName}
                             onChange={this.handleChange.bind(this)}
-                            className='form-control'
                           />
-                        </div>
                       </div>
                     </div>
 
                     <div className='row'>
                       <div className='col-xs-12'>
-                        <div className='form-group'>
-                          <label 
-                            htmlFor='email'
-                            className='control-label'
-                          >
-                            Email
-                          </label>
-                          <input
-                            name='email'
-                            value={this.state.registration.email}
+
+                          <FormInput
+                            name="email"
+                            label="Email"
+                            field={this.state.registration.email}
                             onChange={this.handleChange.bind(this)}
-                            className='form-control'
                           />
-                        </div>
                       </div>
                     </div>
 
                     <div className='row'>
                       <div className='col-xs-12'>
-                        <div className='form-group'>
-                          <label 
-                            htmlFor='password'
-                            className='control-label'
-                          >
-                            Password
-                          </label>
-                          <input
-                            type='password'
-                            name='password'
-                            value={this.state.registration.password}
-                            onChange={this.handleChange.bind(this)}
-                            className='form-control'
-                          />
-                        </div>
+                        <FormInput
+                          name="password"
+                          label="Password"
+                          field={this.state.registration.password}
+                          onChange={this.handleChange.bind(this)}
+                        />
+
                       </div>
                     </div>
 
